@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Debt Ahead</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <p class="course">CMSC 170 · Introduction to Artificial Intelligence</p>
+            <h1 class="project-title">Debt Ahead</h1>
+            <p class="project-subtitle">
+                Predicting whether the Philippine National Government’s outstanding debt
+                will rise next month using historical debt trends.
+            </p>
+
+            <h2>Group Members</h2>
+            <ul>
+                <li>Montablan, Samuel X.</li>
+                <li>Magnaye, Roi Aaron X.</li>
+                <li>Legasto, John Christian C.</li>
+            </ul>
+
+            <nav aria-label="Project sections">
+                <a href="#problem">Problem</a>
+                <a href="#dataset">Dataset</a>
+                <a href="#methods">Methods</a>
+                <a href="#experiment">Experimental Setup</a>
+                <a href="#results">Results</a>
+                <a href="#discussion">Discussion</a>
+                <a href="#conclusion">Conclusion</a>
+                <a href="#references">References</a>
+                <a href="#links">Project Links</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="problem">
+            <h2>Problem Statement & Motivation</h2>
+
+            <p>
+                The Philippine National Government's outstanding debt changes from
+                month to month. This project uses monthly debt records from January
+                1993 to September 2025 to examine whether recent changes in domestic,
+                external, and total debt, together with the calendar month, can help
+                predict whether total outstanding debt will increase the following month.
+            </p>
+
+            <h3>Problem Statement</h3>
+
+            <blockquote class="problem-statement">
+                How well can we predict whether total outstanding debt will rise
+                next month, and do the models perform better than simply predicting
+                an increase every month or using the most recent debt trend?
+            </blockquote>
+
+            <p>
+                We compare K-Nearest Neighbors, Naive Bayes, and the Perceptron,
+                implemented using NumPy, against two baselines. We train the models
+                on the earlier records and test them on the later records without
+                shuffling. We compare accuracy, macro F1, and F1 for each class to
+                see how well the methods handle both increases and months without
+                an increase.
+            </p>
+        </section>
+
+        <section id="dataset">
+            <h2>Dataset Description</h2>
+
+            <dl>
+                <dt>Source</dt>
+                <dd>
+                    The data in <code>debt_monthly_1993-2025.csv</code> were extracted
+                    from the PDF <em>Outstanding Debt – September 2025 (Current Year
+                    Monthly)</em>, available on the
+                    <a href="https://data.bettergov.ph/datasets/13">BetterGov dataset page</a>.
+                    The CSV contains monthly records from January 1993 to September 2025.
+                </dd>
+
+                <dt>Size and Coverage</dt>
+                <dd>
+                    The CSV contains 393 monthly records from January 1993 to
+                    September 2025. Each record contains the year, month, month
+                    number, domestic debt, external debt, and total outstanding debt.
+                    Debt amounts are recorded in millions of Philippine pesos.
+                    After preprocessing, 391 labeled samples remain.
+                </dd>
+
+                <dt>Input Features</dt>
+                <dd>
+                    <ul>
+                        <li>Percentage change in domestic debt from the previous month</li>
+                        <li>Percentage change in external debt from the previous month</li>
+                        <li>Percentage change in total outstanding debt from the previous month</li>
+                        <li>Calendar month encoded as an integer from 1 to 12</li>
+                    </ul>
+                </dd>
+
+                <dt>Target</dt>
+                <dd>
+                    The target is 1 if total outstanding debt increases from the
+                    current month to the following month, and 0 if it stays the
+                    same or decreases.
+                </dd>
+            </dl>
+
+            <h3>Preprocessing Steps</h3>
+            <ol>
+                <li>Arrange the monthly records in chronological order.</li>
+                <li>Compute the percentage change from the previous month for each debt series.</li>
+                <li>Compare current-month and following-month total debt to assign the target.</li>
+                <li>
+                    Exclude the first month because it has no previous observation
+                    and the last month because it has no following observation.
+                </li>
+                <li>
+                    Standardize the inputs for KNN and the Perceptron using means
+                    and standard deviations calculated from the training set.
+                    Naive Bayes uses the original feature values.
+                </li>
+            </ol>
+        </section>
+
+        <section id="methods">
+            <h2>Methods</h2>
+
+            <h3>K-Nearest Neighbors (KNN)</h3>
+            <p>
+                KNN finds the 21 closest training samples using Euclidean distance
+                across the four standardized features.
+            </p>
+            <p>
+                <strong>Euclidean distance.</strong>
+                d(z, z<sub>i</sub>) = √[Σ<sub>j=1</sub><sup>4</sup>
+                (z<sub>j</sub> − z<sub>ij</sub>)<sup>2</sup>]
+            </p>
+            <p>
+                Here, z is the input sample and z<sub>i</sub> is a training sample.
+                KNN predicts the majority class among the 21 neighbors.
+            </p>
+
+            <h3>Naive Bayes</h3>
+            <p>
+                Naive Bayes scores each class using its frequency in the training
+                data, the calendar month, and the three debt percentage changes.
+            </p>
+            <p>
+                <strong>Class score.</strong>
+                S(c) = ln P(c) + ln P(m | c) +
+                Σ<sub>j=1</sub><sup>3</sup> ln f<sub>cj</sub>(x<sub>j</sub>)
+            </p>
+            <p>
+                P(c) is the prior probability of class c, P(m | c) is the
+                Laplace-smoothed probability of calendar month m within that class,
+                and f<sub>cj</sub> is the Gaussian density for debt-change feature j.
+                The model predicts the class with the higher score.
+            </p>
+
+            <h3>Perceptron</h3>
+            <p>
+                The Perceptron classifies each sample using a weighted sum of its
+                standardized features.
+            </p>
+            <p>
+                <strong>Decision score.</strong>
+                s = w · z + b. Predict 1 if s &gt; 0 and 0 otherwise.
+            </p>
+            <p>
+                When it makes a mistake during training, it updates the weights w
+                and bias b using a learning rate of 0.1. It trains for up to
+                200 epochs and keeps the weights and bias that produced the
+                fewest training errors.
+            </p>
+
+            <h3>Baselines</h3>
+            <ul>
+                <li><strong>Always up.</strong> Predicts an increase every month.</li>
+                <li>
+                    <strong>Last-month trend.</strong> Predicts an increase if total
+                    debt rose from the previous month to the current month.
+                </li>
+            </ul>
+        </section>
+
+        <section id="experiment">
+            <h2>Experimental Setup</h2>
+
+            <h3>Data Split</h3>
+            <p>
+                The 391 labeled samples were split chronologically, with the
+                first 313 used for training and the last 78 used for testing.
+                The data was split approximately 80/20 without shuffling.
+            </p>
+
+            <h3>Evaluation Metrics</h3>
+            <p>
+                The comparison reports accuracy, macro F1, and separate F1 scores
+                for the increase and no-increase classes. Macro F1 gives equal
+                weight to both classes by averaging their F1 scores. Confusion
+                matrices show how many samples each model classified correctly
+                or incorrectly for each class.
+            </p>
+
+            <h3>Model Settings</h3>
+            <ul>
+                <li>
+                    <strong>KNN.</strong> Used 21 neighbors with Euclidean distance.
+                    The value was selected from 1, 3, 5, 7, 11, 15, and 21 based on
+                    accuracy on the last 20% of the training set.
+                </li>
+                <li>
+                    <strong>Naive Bayes.</strong> Applied add-one Laplace smoothing
+                    to the 12 calendar month categories. Added 10<sup>−9</sup> to
+                    each Gaussian variance estimate to avoid division by zero.
+                </li>
+                <li>
+                    <strong>Perceptron.</strong> Used a learning rate of 0.1, a maximum
+                    of 200 epochs, and a random seed of 0 to shuffle the training
+                    samples each epoch.
+                </li>
+            </ul>
+        </section>
+
+        <section id="results">
+            <h2>Results</h2>
+
+            <table class="results-table">
+                <caption>Table 1. Test-set performance across all methods and baselines.</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Method</th>
+                        <th scope="col">Accuracy</th>
+                        <th scope="col">Macro F1</th>
+                        <th scope="col">F1 (up)</th>
+                        <th scope="col">F1 (not up)</th>
+                        <th scope="col">TN</th>
+                        <th scope="col">FP</th>
+                        <th scope="col">FN</th>
+                        <th scope="col">TP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">KNN (k = 21)</th>
+                        <td>0.769</td><td>0.484</td><td>0.868</td><td>0.100</td>
+                        <td>1</td><td>17</td><td>1</td><td>59</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Naive Bayes</th>
+                        <td>0.577</td><td>0.509</td><td>0.692</td><td>0.327</td>
+                        <td>8</td><td>10</td><td>23</td><td>37</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Perceptron</th>
+                        <td>0.769</td><td>0.435</td><td>0.870</td><td>0.000</td>
+                        <td>0</td><td>18</td><td>0</td><td>60</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Always up</th>
+                        <td>0.769</td><td>0.435</td><td>0.870</td><td>0.000</td>
+                        <td>0</td><td>18</td><td>0</td><td>60</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Last-month trend</th>
+                        <td>0.679</td><td>0.540</td><td>0.793</td><td>0.286</td>
+                        <td>5</td><td>13</td><td>12</td><td>48</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <figure>
+                <img
+                    src="../results/scores.png"
+                    alt="Bar chart comparing accuracy, macro F1, and class-specific F1 scores for the five methods">
+                <figcaption>Figure 1. Comparison of methods on the test set.</figcaption>
+            </figure>
+        </section>
+
+        <section id="discussion">
+            <h2>Discussion</h2>
+
+            <h3>Model Performance</h3>
+            <p>
+                Placeholder lang
+            </p>
+            <p>
+                Placeholder lang
+            </p>
+
+            <h3>Limitations</h3>
+            <p>
+                Placeholder lang
+            </p>
+
+            <h3>Possible Improvements</h3>
+            <p>
+                Placeholder lang
+            </p>
+        </section>
+
+        <section id="conclusion">
+            <h2>Conclusion</h2>
+            <p>
+                Placeholder lang
+            </p>
+        </section>
+
+        <section id="references">
+            <h2>References</h2>
+            <ol>
+                <li>
+                    <em>Outstanding Debt – September 2025 (Current Year Monthly)</em> [PDF].
+                    <a href="https://data.bettergov.ph/datasets/13">BetterGov Data</a>.
+                </li>
+                <li>Placeholder lang</li>
+            </ol>
+            <p>
+                <strong>AI Tool Disclosure.</strong> Placeholder
+            </p>
+        </section>
+
+        <section id="links">
+            <h2>Project Links</h2>
+            <ul>
+                <li><a href="https://github.com/ramagnaye/cmsc170_national_government_outstanding_debt">GitHub Repository</a></li>
+                <li><a href="slides_url">Presentation Slides</a></li>
+            </ul>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,203 @@
+body {
+    margin: 0;
+    background: #f3f6f4;
+    color: #1d2e29;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.container {
+    width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    background: #123b32;
+    color: white;
+    padding: 36px 0 24px;
+}
+
+.course {
+    margin: 0 0 10px;
+    color: #d4e9e0;
+}
+
+h1 {
+    margin: 0 0 24px;
+    font-size: 38px;
+    line-height: 1.15;
+}
+
+header h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+header ul {
+    margin-top: 6px;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #698a80;
+}
+
+nav a {
+    color: white;
+}
+
+main {
+    padding: 28px 0;
+}
+
+section {
+    margin-bottom: 24px;
+    padding: 24px 30px;
+    background: white;
+    border: 1px solid #d4e1dc;
+    border-radius: 8px;
+}
+
+section h2 {
+    margin: 0 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #d4e1dc;
+    color: #14594d;
+}
+
+h3 {
+    margin: 18px 0 4px;
+}
+
+p {
+    margin: 0 0 12px;
+}
+
+dt {
+    font-weight: bold;
+}
+
+dd {
+    margin: 0 0 14px;
+}
+
+dd ul {
+    margin: 4px 0 0;
+    padding-left: 24px;
+}
+
+a {
+    color: #14594d;
+    text-underline-offset: 3px;
+}
+
+figure {
+    margin: 20px 0;
+}
+
+.image-placeholder {
+    padding: 48px 20px;
+    border: 2px dashed #9eb6ab;
+    border-radius: 6px;
+    background: #f3f6f4;
+    color: #36594e;
+    text-align: center;
+}
+
+figure img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+figcaption {
+    margin-top: 8px;
+    color: #425954;
+}
+
+
+#results table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#results caption {
+    margin-bottom: 8px;
+    text-align: left;
+    font-weight: normal;
+    color: #425954;
+}
+
+#results th,
+#results td {
+    padding: 8px 10px;
+    border: 1px solid #d4e1dc;
+    text-align: left;
+}
+
+#results thead {
+    background-color: #e9f2ee;
+}
+
+.problem-statement {
+    margin: 12px 0 18px;
+    padding: 14px 18px;
+    border-left: 3px solid #14594d;
+    background: #e9f2ee;
+    font-size: 1.05rem;
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.results-table caption {
+    margin-bottom: 8px;
+    text-align: left;
+    font-weight: bold;
+}
+
+.results-table th,
+.results-table td {
+    padding: 8px 10px;
+    border: 1px solid #d4e1dc;
+}
+
+.results-table thead {
+    background-color: #e9f2ee;
+}
+
+.results-table th:first-child {
+    text-align: left;
+}
+
+.results-table td {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+#results figure img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.project-title {
+    margin: 20px 0 12px;
+    font-size: 72px;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+}
+
+.project-subtitle {
+    max-width: 680px;
+    margin: 0 0 28px;
+    color: #d4e9e0;
+    font-size: 21px;
+    line-height: 1.55;
+}
