@@ -291,12 +291,78 @@
 
             <h3>Limitations</h3>
             <p>
-                Placeholder lang
+                The most significant limitation is class imbalance combined with a
+                small test set. Of the 78 test samples, 60 (76.9%) are months where
+                debt increased, so a model that always predicts an increase already
+                reaches 0.769 accuracy. KNN and the Perceptron only match this
+                baseline, and the Perceptron collapses entirely to the majority
+                class, with an F1 of 0.000 for the "not up" class. Accuracy alone
+                therefore says little about whether the models learned anything,
+                and with only 18 "not up" test samples, a difference of a few
+                predictions shifts the per-class F1 scores substantially. The
+                results come from a single chronological split and a single random
+                seed, so they could not be checked with cross-validation or repeated
+                trials, and the differences between methods may not be statistically
+                meaningful. Hyperparameter selection was also limited. KNN's k was
+                chosen by accuracy on the last 20% of the training set, a criterion
+                that favors the majority class and likely pushed the model toward
+                predicting increases, while the Perceptron's settings were not tuned
+                at all.
+            </p>
+            <p>
+                The features are another constraint. All four inputs are derived
+                from the debt series itself, plus the calendar month, so the models
+                can only detect patterns already present in past debt movements.
+                Monthly changes in the Philippines' outstanding debt are driven
+                largely by outside factors such as budget deficits, revenue
+                collection, borrowing schedules, and bond issuances, none of which
+                are in the dataset. The peso value of external debt also moves with
+                exchange rates, so some month-to-month changes reflect currency
+                revaluation rather than new borrowing, and the models cannot
+                distinguish the two. In addition, the binary target treats a tiny
+                decrease and a large decrease the same, and treats a flat month as
+                "not up," which discards information about the size of the change.
+                Finally, the data were extracted from a PDF into a CSV, so any
+                extraction errors could carry into the features, and the roughly
+                391 samples are a small base for models like KNN and Naive Bayes,
+                whose assumptions (such as Gaussian, independent features in Naive
+                Bayes) may not hold for percentage changes in a trending financial
+                series.
             </p>
 
             <h3>Possible Improvements</h3>
             <p>
-                Placeholder lang
+                The first improvement is to evaluate the models more rigorously.
+                Using time-series cross-validation (for example, expanding-window
+                validation) instead of a single split would give a more stable
+                estimate of performance and show whether the results hold across
+                different periods. Metrics such as macro F1 or balanced accuracy
+                should drive model selection, so that KNN's k and the Perceptron's
+                settings are not tuned toward the majority class. Class imbalance
+                could also be addressed directly through class weights, a decision
+                threshold adjusted away from 0.5, or resampling of the training set,
+                which might keep the Perceptron from collapsing to "always up."
+                Repeating the experiments over several random seeds and reporting
+                averages and variability would show whether the observed differences
+                between methods are meaningful.
+            </p>
+            <p>
+                The second set of improvements concerns the features and the problem
+                formulation. Adding economic indicators such as the fiscal deficit,
+                government revenue and expenditure, the peso-dollar exchange rate,
+                interest rates, and GDP growth would give the models information
+                about why debt rises, instead of relying on past debt changes alone.
+                Lagged features covering several previous months, rolling averages,
+                and measures of recent volatility could capture trends that a single
+                previous-month change misses. Separating the effect of exchange rate
+                movements from actual new borrowing would also make the external debt
+                feature more meaningful. The task itself could be reformulated as
+                predicting the size of the monthly change (regression), or as a
+                three-class problem separating increases, flat months, and decreases.
+                Finally, more flexible models such as decision trees, logistic
+                regression, or time-series models like ARIMA could be compared
+                against the current methods, and the source data should be checked
+                against the original PDF to rule out extraction errors.
             </p>
         </section>
 
@@ -330,4 +396,4 @@
         </section>
     </main>
 </body>
-</html>
+                        </html>
